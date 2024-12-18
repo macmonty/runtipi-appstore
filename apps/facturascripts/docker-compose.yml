@@ -8,14 +8,6 @@ services:
       - 50080:80
     volumes:
       - ${APP_DATA_DIR}/facturascripts:/var/www/html
-    # environment:
-    #  - POSTGRES_HOST=facturascripts-db
-    #  - POSTGRES_DB=nextcloud
-    #  - POSTGRES_USER=nextcloud
-    #  - POSTGRES_PASSWORD=${NEXTCLOUD_MINI_DB_PASSWORD}
-    #  - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_MINI_ADMIN_PASSWORD}
-    #  - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_MINI_ADMIN_USER}
-    #  - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_MINI_TRUSTED_DOMAINS}
     networks:
       - tipi_main_network
     labels:
@@ -49,15 +41,12 @@ services:
   mysql:
     container_name: mysql
     image: mysql:8.0
-	command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/facturascripts/mysql:/var/lib/mysql
     environment:
-      #- POSTGRES_DB=nextcloud
-      #- POSTGRES_USER=nextcloud
-      #- POSTGRES_PASSWORD=${NEXTCLOUD_MINI_DB_PASSWORD}
-	  MYSQL_ROOT_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: mypassword
     networks:
       - tipi_main_network
     labels:
