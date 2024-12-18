@@ -1,0 +1,65 @@
+services:
+  facturascripts:
+    container_name: facturascripts
+    image: facturascripts:latest
+    restart: unless-stopped
+    ports:
+      #- ${APP_PORT}:80
+      - 50080:80
+    volumes:
+      - ${APP_DATA_DIR}/facturascripts:/var/www/html
+    # environment:
+    #  - POSTGRES_HOST=facturascripts-db
+    #  - POSTGRES_DB=nextcloud
+    #  - POSTGRES_USER=nextcloud
+    #  - POSTGRES_PASSWORD=${NEXTCLOUD_MINI_DB_PASSWORD}
+    #  - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_MINI_ADMIN_PASSWORD}
+    #  - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_MINI_ADMIN_USER}
+    #  - NEXTCLOUD_TRUSTED_DOMAINS=${NEXTCLOUD_MINI_TRUSTED_DOMAINS}
+    networks:
+      - tipi_main_network
+    labels:
+      # Main
+      traefik.enable: true
+      traefik.http.middlewares.facturascripts-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.facturascripts.loadbalancer.server.port: 80
+      # Web
+      traefik.http.routers.facturascripts-insecure.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.facturascripts-insecure.entrypoints: web
+      traefik.http.routers.facturascripts-insecure.service: facturascripts
+      traefik.http.routers.facturascripts-insecure.middlewares: facturascripts-web-redirect
+      # Websecure
+      traefik.http.routers.facturascripts.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.facturascripts.entrypoints: websecure
+      traefik.http.routers.facturascripts.service: facturascripts
+      traefik.http.routers.facturascripts.tls.certresolver: myresolver
+      # Local domain
+      traefik.http.routers.facturascripts-local-insecure.rule: Host(`facturascripts.${LOCAL_DOMAIN}`)
+      traefik.http.routers.facturascripts-local-insecure.entrypoints: web
+      traefik.http.routers.facturascripts-local-insecure.service: facturascripts
+      traefik.http.routers.facturascripts-local-insecure.middlewares: facturascripts-web-redirect
+      # Local domain secure
+      traefik.http.routers.facturascripts-local.rule: Host(`facturascripts.${LOCAL_DOMAIN}`)
+      traefik.http.routers.facturascripts-local.entrypoints: websecure
+      traefik.http.routers.facturascripts-local.service: facturascripts
+      traefik.http.routers.facturascripts-local.tls: true
+      # Runtipi managed
+      runtipi.managed: true
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+	command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    volumes:
+      - ${APP_DATA_DIR}/facturascripts/mysql:/var/lib/mysql
+    environment:
+      #- POSTGRES_DB=nextcloud
+      #- POSTGRES_USER=nextcloud
+      #- POSTGRES_PASSWORD=${NEXTCLOUD_MINI_DB_PASSWORD}
+	  MYSQL_ROOT_PASSWORD: mypassword
+    networks:
+      - tipi_main_network
+    labels:
+      # Runtipi managed
+      runtipi.managed: true
