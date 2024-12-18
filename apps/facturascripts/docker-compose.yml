@@ -1,7 +1,7 @@
 services:
   facturascripts:
     container_name: facturascripts
-    image: facturascripts:latest
+    image: facturascripts/facturascripts:latest
     restart: unless-stopped
     ports:
       #- ${APP_PORT}:80
