@@ -1,12 +1,16 @@
 services:
   facturascripts:
     container_name: facturascripts
-    image: facturascripts/facturascripts:latest
+    image: facturascripts/facturascripts:2024.92
     restart: unless-stopped
+    depends_on:
+      - mysql
     ports:
       - ${APP_PORT}:80
+    links:
+      - mysql
     volumes:
-      - ${APP_DATA_DIR}/facturascripts:/var/www/html
+      - ${APP_DATA_DIR}/facturascripts/facturascripts:/var/www/html
     networks:
       - tipi_main_network
     labels:
