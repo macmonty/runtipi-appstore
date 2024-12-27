@@ -24,7 +24,7 @@
     },
     {
       "type": "random",
-      "label": "FacturaScripts database password",
+      "label": "FacturaScripts database random password",
       "min": 32,
       "env_variable": "FACTURASCRIPTS_DB_PASSWORD_2"
     }
